@@ -1,0 +1,20 @@
+name: internal_analyst
+description: "Internal analyst copilot — strict tool-call approval, deeper analysis"
+pii_action: block
+pii_sensitivity: high
+content_safety_action: flag
+injection_action: block
+hallucination_strictness: 0.6
+context_health_threshold: 40.0
+loop_detection_window: 5
+loop_similarity_threshold: 0.80
+max_latency_budget_ms: 200
+tool_call_action: require_approval
+restricted_tools:
+  - refund_order
+  - delete_db_row
+  - send_email
+  - deploy_code
+  - transfer_funds
+escalation_enabled: true
+escalation_webhook: "https://hooks.slack.com/services/PLACEHOLDER"
