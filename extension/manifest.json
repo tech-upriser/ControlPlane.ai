@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "ControlPlane.ai",
+  "version": "1.0",
+  "description": "Core Interception & DOM Manipulation for ControlPlane.ai",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "sidePanel",
+    "webRequest",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "*://*.chatgpt.com/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.chatgpt.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "action": {
+    "default_title": "Open ControlPlane"
+  }
+}

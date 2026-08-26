@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ControlPlane.ai Deep Dive</title>
+    <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Deep Dive</h1>
+    </div>
+    
+    <div class="section overview">
+        <h2>Overview</h2>
+        <div class="metric">
+            <span class="label">Overall Confidence</span>
+            <span class="value confidence-value">72%</span>
+            <div class="progress-bar"><div class="progress" style="width: 72%;"></div></div>
+        </div>
+    </div>
+    
+    <div class="section performance">
+        <h2>Performance</h2>
+        <div class="metric">
+            <span class="label">Accuracy</span>
+            <span class="value">85%</span>
+            <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+        </div>
+        <div class="metric">
+            <span class="label">Hallucination Risk</span>
+            <span class="value warning">Medium</span>
+        </div>
+    </div>
+    
+    <div class="section cost">
+        <h2>Cost</h2>
+        <div class="metric">
+            <span class="label">Inference Cost</span>
+            <span class="value">$0.004</span>
+        </div>
+        <div class="metric">
+            <span class="label">Token Consumption</span>
+            <span class="value">245</span>
+        </div>
+    </div>
+
+    <div class="section responsibility">
+        <h2>Responsibility</h2>
+        <div class="metric tooltip-container">
+            <span class="label">Bias Detection</span>
+            <span class="value good">Low</span>
+            <div class="tooltip">
+                <p>Gender Bias: Low</p>
+                <p>Political Neutrality: Fair (Warning)</p>
+            </div>
+        </div>
+        <div class="metric">
+            <span class="label">Toxicity</span>
+            <span class="value good">None</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button id="btn-block" class="action-btn block">Block</button>
+        <button id="btn-reward" class="action-btn reward">Reward</button>
+        <button id="btn-escalate" class="action-btn escalate">Escalate</button>
+    </div>
+
+    <script src="sidepanel.js"></script>
+</body>
+</html>
