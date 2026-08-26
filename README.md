@@ -593,6 +593,30 @@ for line in response.iter_lines():
 
 ---
 
+## Chrome Extension (Client UI)
+
+The `extension/` directory contains a Manifest V3 Chrome Extension that provides a graphical interface for ControlPlane.ai directly inside ChatGPT. It intercepts prompts, overlays glowing risk boundaries on generated text, and displays a "Deep Dive" side panel with live Performance, Cost, and Responsibility metrics.
+
+### Installation
+
+1. Open Google Chrome and navigate to `chrome://extensions/`
+2. Toggle **Developer mode** in the top right corner.
+3. Click **Load unpacked** in the top left corner.
+4. Select the `extension/` folder located inside this repository.
+
+### Usage
+
+1. Ensure the ControlPlane.ai backend is running (`uvicorn app.main:app --reload`).
+2. Open [chatgpt.com](https://chatgpt.com).
+3. The extension will automatically inject the **ControlPlane Confidence bar** above AI responses.
+4. Click **Deep Dive** to open the side panel and view real-time metrics.
+5. Detected risks will be highlighted in the text:
+   - **Green:** High Confidence
+   - **Orange:** High Cost / Rework
+   - **Red:** Hallucination / Blocked
+
+---
+
 ## License
 
 This project is proprietary. All rights reserved.
