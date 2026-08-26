@@ -1,0 +1,14 @@
+name: default
+description: "Balanced default profile for general use"
+pii_action: redact
+pii_sensitivity: high
+content_safety_action: flag
+injection_action: block
+hallucination_strictness: 0.7
+context_health_threshold: 50.0
+loop_detection_window: 5
+loop_similarity_threshold: 0.85
+max_latency_budget_ms: 100
+tool_call_action: allow
+restricted_tools: []
+escalation_enabled: false
