@@ -1,15 +1,19 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *.egg-info/
 dist/
 build/
 *.egg
+.pytest_cache/
 
 # Virtual environments
 venv/
 .venv/
 env/
+.env
 
 # IDE
 .vscode/
