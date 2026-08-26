@@ -1,0 +1,14 @@
+name: customer_support
+description: "Customer-facing chatbot — zero PII tolerance, fast responses"
+pii_action: redact
+pii_sensitivity: high
+content_safety_action: block
+injection_action: block
+hallucination_strictness: 0.8
+context_health_threshold: 50.0
+loop_detection_window: 3
+loop_similarity_threshold: 0.85
+max_latency_budget_ms: 50
+tool_call_action: allow
+restricted_tools: []
+escalation_enabled: false
