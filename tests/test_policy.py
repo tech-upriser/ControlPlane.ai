@@ -16,7 +16,7 @@ def engine():
 
 
 def test_load_customer_support(engine):
-    """Load customer_support.yaml — verify key fields."""
+    """Load customer_support.yaml - verify key fields."""
     profile = engine.get_profile('customer_support')
     assert profile.pii_action == 'redact'
     assert profile.max_latency_budget_ms == 50
@@ -25,7 +25,7 @@ def test_load_customer_support(engine):
 
 
 def test_load_internal_analyst(engine):
-    """Load internal_analyst.yaml — verify tool controls."""
+    """Load internal_analyst.yaml - verify tool controls."""
     profile = engine.get_profile('internal_analyst')
     assert profile.tool_call_action == 'require_approval'
     assert len(profile.restricted_tools) == 5
@@ -35,7 +35,7 @@ def test_load_internal_analyst(engine):
 
 
 def test_load_default(engine):
-    """Load default.yaml — verify balanced defaults."""
+    """Load default.yaml - verify balanced defaults."""
     profile = engine.get_profile('default')
     assert profile.pii_action == 'redact'
     assert profile.escalation_enabled is False

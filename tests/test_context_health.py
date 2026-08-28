@@ -18,7 +18,7 @@ class TestHealthScoring:
 
     def test_moderate_session(self):
         result = calculate_health(turn_count=20, cumulative_tokens=15000, error_count=1, recent_scores=[])
-        # turn_penalty = (20-10)*2 = 20, token_penalty = 15, error_penalty = 15 → score = 50
+        # turn_penalty = (20-10)*2 = 20, token_penalty = 15, error_penalty = 15 -> score = 50
         assert 40 < result.score < 70
 
     def test_heavily_degraded(self):
@@ -56,7 +56,7 @@ class TestBrainRotDetection:
     def test_brain_rot_exactly_3_below(self):
         recent = [45, 49, 50, 48, 80]
         result = calculate_health(turn_count=10, cumulative_tokens=1000, error_count=0, recent_scores=recent)
-        # 45, 49, 48 are < 50 → 3/5 → brain rot
+        # 45, 49, 48 are < 50 -> 3/5 -> brain rot
         assert result.brain_rot_detected is True
 
     def test_too_few_scores_no_brain_rot(self):

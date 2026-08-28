@@ -1,5 +1,5 @@
 """
-Context Health — Session health scoring and cost estimation.
+Context Health - Session health scoring and cost estimation.
 
 Health scoring uses a penalty-based formula:
   health = max(0, 100 - (turn_penalty + token_penalty + error_penalty))
@@ -9,7 +9,7 @@ Brain Rot detection: if 3 out of last 5 health scores are below 50.
 Cost estimation uses hardcoded per-model token pricing and tracks waste from
 detected loops.
 
-Zero external dependencies — uses only Python stdlib.
+Zero external dependencies - uses only Python stdlib.
 """
 
 from dataclasses import dataclass, field
@@ -18,7 +18,7 @@ from typing import List, Optional
 
 @dataclass
 class ContextHealthResult:
-    score: float                    # 0 – 100
+    score: float                    # 0 - 100
     is_degraded: bool              # score < threshold
     brain_rot_detected: bool       # 3/5 recent scores < 50
     fork_recommendation: bool      # True if fork would help
@@ -27,7 +27,7 @@ class ContextHealthResult:
 
 @dataclass
 class CostMetrics:
-    estimated_cost_usd: float      # tokens × price per token
+    estimated_cost_usd: float      # tokens * price per token
     tokens_wasted_on_loops: int
     context_utilization_pct: float  # useful tokens / total
     cost_rating: str               # "efficient", "moderate", "wasteful"

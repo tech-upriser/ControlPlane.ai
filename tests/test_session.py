@@ -10,7 +10,7 @@ def store():
 
 
 def test_create_session(store):
-    """Create session — turn=0, tokens=0, errors=0."""
+    """Create session - turn=0, tokens=0, errors=0."""
     session = store.create_session('test-session-1')
     assert session.session_id == 'test-session-1'
     assert session.turn_count == 0
@@ -19,7 +19,7 @@ def test_create_session(store):
 
 
 def test_update_session(store):
-    """Update session — turn increments, tokens accumulate."""
+    """Update session - turn increments, tokens accumulate."""
     store.create_session('test-session-2')
     session = store.update_session('test-session-2', token_delta=150)
     assert session.turn_count == 1
@@ -32,7 +32,7 @@ def test_update_session(store):
 
 
 def test_health_score_rolling_window(store):
-    """Health score rolling window — max 5 entries."""
+    """Health score rolling window - max 5 entries."""
     store.create_session('test-session-3')
     for i in range(7):
         store.update_session('test-session-3', health_score=float(i * 10))

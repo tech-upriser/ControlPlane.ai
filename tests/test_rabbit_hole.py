@@ -84,7 +84,7 @@ class TestDomainRelevance:
                 "https://spam-site.xyz/science",
             ]
         )
-        # One good, one bad → flagged has one entry
+        # One good, one bad -> flagged has one entry
         assert len(result.flagged_domains) == 1
 
     def test_gov_domain(self):

@@ -15,7 +15,7 @@ def default_policy():
 
 
 def test_clean_results_allow(engine, default_policy):
-    """Clean results (nothing triggered) — overall < 30, action=allow."""
+    """Clean results (nothing triggered) - overall < 30, action=allow."""
     results = {}
     scores = engine.evaluate(results, default_policy)
     assert scores.recommended_action == "allow"
@@ -27,7 +27,7 @@ def test_clean_results_allow(engine, default_policy):
 
 
 def test_pii_detected_flag_or_higher(engine, default_policy):
-    """PII detected — responsibility drops, action >= flag."""
+    """PII detected - responsibility drops, action >= flag."""
     pii_matches = [SimpleNamespace(pii_type="CREDIT_CARD"), SimpleNamespace(pii_type="EMAIL")]
     results = {'pii': pii_matches}
     scores = engine.evaluate(results, default_policy)
@@ -37,7 +37,7 @@ def test_pii_detected_flag_or_higher(engine, default_policy):
 
 
 def test_injection_detected_block_or_higher(engine, default_policy):
-    """Injection detected — responsibility drops heavily, action >= block."""
+    """Injection detected - responsibility drops heavily, action >= block."""
     injection = SimpleNamespace(is_injection=True, confidence=0.95)
     results = {'injection': injection}
     scores = engine.evaluate(results, default_policy)
@@ -47,7 +47,7 @@ def test_injection_detected_block_or_higher(engine, default_policy):
 
 
 def test_combined_triggers_escalate(engine, default_policy):
-    """Loop + PII + hallucination — all 3 scores drop, action=escalate."""
+    """Loop + PII + hallucination - all 3 scores drop, action=escalate."""
     pii_matches = [
         SimpleNamespace(pii_type="CREDIT_CARD"),
         SimpleNamespace(pii_type="SSN"),
@@ -74,7 +74,7 @@ def test_combined_triggers_escalate(engine, default_policy):
 
 
 def test_cost_only_issue(engine, default_policy):
-    """Only cost issue (loop) — cost drops, performance and responsibility stay high."""
+    """Only cost issue (loop) - cost drops, performance and responsibility stay high."""
     loop = SimpleNamespace(is_loop=True)
     results = {'loop': loop}
     scores = engine.evaluate(results, default_policy)

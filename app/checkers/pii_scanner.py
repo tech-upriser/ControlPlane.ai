@@ -1,11 +1,11 @@
 """
-PII Scanner — Detects personally identifiable information in text.
+PII Scanner - Detects personally identifiable information in text.
 
 Supports: Credit Cards (Luhn-validated), SSNs, API Keys (6 providers + generic
 high-entropy), Emails, and Phone Numbers. All detection is regex-based with
 secondary validation to minimize false positives.
 
-Zero external dependencies — uses only Python stdlib.
+Zero external dependencies - uses only Python stdlib.
 """
 
 import re
@@ -19,7 +19,7 @@ class PIIMatch:
     pii_type: str       # "CREDIT_CARD", "SSN", "API_KEY", "EMAIL", "PHONE"
     span_start: int     # character index where match starts
     span_end: int       # character index where match ends
-    confidence: float   # 0.0 – 1.0
+    confidence: float   # 0.0 - 1.0
     redaction: str      # e.g., "[REDACTED-CREDIT_CARD]"
 
 
