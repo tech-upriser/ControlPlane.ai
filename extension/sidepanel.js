@@ -26,8 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initActions();
     initBiasPopover();
 
-    // Render default/demo data on load for visual preview
-    renderEvaluation(getDemoData());
+    // Reset UI to empty state
+    updateConfidence('--%', 'normal');
+    renderHistogram([]);
+    renderDimensions({
+        performance: { score: 0 },
+        cost: { score: 0 },
+        responsibility: { score: 0 }
+    });
 });
 
 // ===== TAB NAVIGATION =====

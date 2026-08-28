@@ -9,6 +9,7 @@ from app.api.telemetry_routes import router as telemetry_router
 from app.api.telemetry_routes import get_session_store, get_audit_logger, get_policy_engine
 from app.core.risk_engine import RiskEngine
 from app.core.airlock import router as airlock_router
+from app.api.evaluate_routes import router as evaluate_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -46,6 +47,7 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(telemetry_router)
 app.include_router(airlock_router)
+app.include_router(evaluate_router)
 
 @app.get("/health")
 async def health():
