@@ -3,68 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ControlPlane.ai Deep Dive</title>
+    <title>ControlPlane.ai</title>
     <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Deep Dive</h1>
-    </div>
-    
-    <div class="section overview">
-        <h2>Overview</h2>
-        <div class="metric">
-            <span class="label">Overall Confidence</span>
-            <span class="value confidence-value">72%</span>
-            <div class="progress-bar"><div class="progress" style="width: 72%;"></div></div>
+    <!-- Header -->
+    <div id="header">
+        <div class="header-left">
+            <span class="header-icon">🛡️</span>
+            <span class="header-title">ControlPlane</span>
+            <span class="header-version">v1.2.0</span>
         </div>
-    </div>
-    
-    <div class="section performance">
-        <h2>Performance</h2>
-        <div class="metric">
-            <span class="label">Accuracy</span>
-            <span class="value">85%</span>
-            <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
-        </div>
-        <div class="metric">
-            <span class="label">Hallucination Risk</span>
-            <span class="value warning">Medium</span>
-        </div>
-    </div>
-    
-    <div class="section cost">
-        <h2>Cost</h2>
-        <div class="metric">
-            <span class="label">Inference Cost</span>
-            <span class="value">$0.004</span>
-        </div>
-        <div class="metric">
-            <span class="label">Token Consumption</span>
-            <span class="value">245</span>
+        <div class="header-right">
+            <a href="#" class="header-link" id="btn-maximize">Maximize</a>
+            <button class="header-close" id="btn-close">✕</button>
         </div>
     </div>
 
-    <div class="section responsibility">
-        <h2>Responsibility</h2>
-        <div class="metric tooltip-container">
-            <span class="label">Bias Detection</span>
-            <span class="value good">Low</span>
-            <div class="tooltip">
-                <p>Gender Bias: Low</p>
-                <p>Political Neutrality: Fair (Warning)</p>
+    <!-- Tab Bar -->
+    <div id="tab-bar">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="traces">Traces</button>
+        <button class="tab" data-tab="models">Models</button>
+        <button class="tab" data-tab="policy">Policy</button>
+        <button class="tab" data-tab="settings">Settings</button>
+    </div>
+
+    <!-- Tab Content: Overview -->
+    <div id="tab-content-overview" class="tab-content active">
+
+        <!-- Overall Confidence -->
+        <div id="confidence-section" class="section">
+            <div class="section-header-row">
+                <span class="section-label">Overall Confidence <span class="info-icon">ⓘ</span></span>
+                <a href="#" class="section-link" id="how-calculated">How is this contributed?</a>
+            </div>
+            <div class="confidence-display">
+                <div class="confidence-score-area">
+                    <span id="confidence-value" class="confidence-value">72%</span>
+                    <span id="confidence-sublabel" class="confidence-sublabel">Overall</span>
+                </div>
+                <div class="histogram-area">
+                    <div id="histogram" class="histogram">
+                        <!-- 20 bars rendered by JS -->
+                    </div>
+                    <div class="histogram-scale">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="metric">
-            <span class="label">Toxicity</span>
-            <span class="value good">None</span>
+
+        <!-- Dimensions -->
+        <div id="dimensions-section" class="section">
+            <div class="section-label">Dimensions <span class="info-icon">ⓘ</span></div>
+
+            <!-- Performance -->
+            <div class="dimension" data-dimension="performance">
+                <div class="dimension-header">
+                    <span class="dimension-icon perf-icon">✅</span>
+                    <span class="dimension-label">Performance (Reliability)</span>
+                    <svg class="ring-indicator" viewBox="0 0 36 36">
+                        <circle class="ring-bg" cx="18" cy="18" r="15.5" />
+                        <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
+                    </svg>
+                    <span class="dimension-score">0%</span>
+                    <span class="dimension-chevron">›</span>
+                </div>
+                <div class="dimension-body">
+                    <div class="sub-metric"><span class="sub-label">Accuracy</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Hallucination risks</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Hallucination risks</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                </div>
+            </div>
+
+            <!-- Cost -->
+            <div class="dimension" data-dimension="cost">
+                <div class="dimension-header">
+                    <span class="dimension-icon cost-icon">💰</span>
+                    <span class="dimension-label">Cost (Efficiency)</span>
+                    <svg class="ring-indicator" viewBox="0 0 36 36">
+                        <circle class="ring-bg" cx="18" cy="18" r="15.5" />
+                        <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
+                    </svg>
+                    <span class="dimension-score">0%</span>
+                    <span class="dimension-chevron">›</span>
+                </div>
+                <div class="dimension-body">
+                    <div class="sub-metric"><span class="sub-label">Inference</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Hallucination</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Detection fails</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Correction</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                </div>
+            </div>
+
+            <!-- Responsibility -->
+            <div class="dimension" data-dimension="responsibility">
+                <div class="dimension-header">
+                    <span class="dimension-icon resp-icon">🛡️</span>
+                    <span class="dimension-label">Responsibility</span>
+                    <svg class="ring-indicator" viewBox="0 0 36 36">
+                        <circle class="ring-bg" cx="18" cy="18" r="15.5" />
+                        <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
+                    </svg>
+                    <span class="dimension-score">0%</span>
+                    <span class="dimension-chevron">›</span>
+                </div>
+                <div class="dimension-body">
+                    <!-- Nested: Safety & Ethics -->
+                    <div class="sub-section-header">
+                        <span class="dimension-icon resp-icon">🛡️</span>
+                        <span>Responsibility (Safety &amp; Ethics)</span>
+                        <span class="sub-section-link" id="ai-powered-link">AI powered <span class="info-icon">ⓘ</span></span>
+                    </div>
+                    <div class="sub-metric"><span class="sub-label">Hate Speech</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">PII Leaks</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Hate Speech</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">PII Leaks</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric has-popover" id="bias-row"><span class="sub-label">Bias Detection</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                    <div class="sub-metric"><span class="sub-label">Tone Compliance</span><div class="sub-bar-track"><div class="sub-bar-fill"></div></div><span class="sub-value">0%</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bias Popover (hidden by default) -->
+        <div id="bias-popover" class="popover hidden">
+            <div class="popover-arrow"></div>
+            <p><strong>Bias:</strong> <span id="popover-bias">Low</span></p>
+            <p><strong>Racial Bias:</strong> <span id="popover-racial">Low</span></p>
+            <p><strong>Political Neutrality:</strong> <span id="popover-political" class="warning-text">Fair (Warning)</span></p>
+            <p class="popover-detail">Patterns neutralize biases</p>
+            <p class="popover-detail">Inference is provided token flo studies.</p>
+            <a href="#" class="popover-link">View Audit/More</a>
+        </div>
+
+        <!-- Checks -->
+        <div id="checks-section" class="section">
+            <div class="section-header-row">
+                <span class="section-label">Checks <span class="info-icon">ⓘ</span></span>
+                <span class="checks-status" id="checks-status">All passes <span class="info-icon">ⓘ</span></span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div id="actions-section" class="section">
+            <div class="section-label">Actions</div>
+            <div class="action-buttons">
+                <button id="btn-block" class="action-btn btn-block">
+                    <span class="btn-icon">🚫</span> Block
+                </button>
+                <button id="btn-reword" class="action-btn btn-reword">
+                    <span class="btn-icon">✏️</span> Reword
+                </button>
+                <button id="btn-escalate" class="action-btn btn-escalate" disabled title="Enterprise feature — coming soon">
+                    <span class="btn-icon">⚡</span> Escalate
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="actions">
-        <button id="btn-block" class="action-btn block">Block</button>
-        <button id="btn-reward" class="action-btn reward">Reward</button>
-        <button id="btn-escalate" class="action-btn escalate">Escalate</button>
+    <!-- Tab Content: Coming Soon (for other tabs) -->
+    <div id="tab-content-placeholder" class="tab-content">
+        <div class="coming-soon">
+            <div class="coming-soon-icon">🚧</div>
+            <h3>Coming Soon</h3>
+            <p>This feature is under development.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <span class="footer-status">● ControlPlane v1.5.0</span>
+        <span class="footer-badge">Beta</span>
+        <a href="#" class="footer-link">Report Issue</a>
     </div>
 
     <script src="sidepanel.js"></script>
