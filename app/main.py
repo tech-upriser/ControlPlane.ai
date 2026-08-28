@@ -37,6 +37,15 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Initialize state on app creation (ensures availability across all test/ASGI runners)
+app.state.policy_engine = get_policy_engine()
+_config_dir = os.path.join(os.path.dirname(__file__), "..", "config", "profiles")
+if os.path.isdir(_config_dir):
+    app.state.policy_engine.load_profiles(_config_dir)
+app.state.session_store = get_session_store()
+app.state.audit_logger = get_audit_logger()
+app.state.risk_engine = RiskEngine()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Configure per environment
