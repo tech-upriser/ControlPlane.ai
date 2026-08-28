@@ -112,7 +112,7 @@ class TestWindowSize:
             "Search for pizza recipe",
         ]
         result = detect_loop(history, window_size=3)
-        # Last 3 are identical → should detect loop
+        # Last 3 are identical -> should detect loop
         assert result.is_loop is True
         assert result.recommended_action in ("warn", "kill")
 
@@ -125,6 +125,6 @@ class TestWindowSize:
             "Search for pizza recipe",
         ]
         result = detect_loop(history, window_size=5)
-        # 3 different + 2 identical → mixed, unlikely to be a loop
+        # 3 different + 2 identical -> mixed, unlikely to be a loop
         # The diverse topics should bring the average similarity below threshold
         assert result.recommended_action in ("continue", "warn")

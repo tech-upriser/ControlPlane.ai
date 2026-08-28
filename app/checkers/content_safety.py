@@ -1,11 +1,11 @@
 """
-Content Safety — Keyword/pattern-based unsafe content detection.
+Content Safety - Keyword/pattern-based unsafe content detection.
 
 Scans text across 4 categories: violence, hate_speech, self_harm, dangerous.
 Uses word boundary (\\b) matching to prevent false positives on substrings
 (e.g., "therapist" will NOT match as containing "rapist").
 
-Zero external dependencies — uses only Python stdlib.
+Zero external dependencies - uses only Python stdlib.
 """
 
 import re

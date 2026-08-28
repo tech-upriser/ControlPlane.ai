@@ -21,7 +21,7 @@ class TestLuhnCheck:
 
 class TestShannonEntropy:
     def test_low_entropy(self):
-        # All same characters → entropy = 0
+        # All same characters -> entropy = 0
         assert shannon_entropy("aaaaaaa") == 0.0
 
     def test_high_entropy(self):

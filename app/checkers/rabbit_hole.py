@@ -1,5 +1,5 @@
 """
-Rabbit Hole Detector — Prevents AI from drifting off-topic during web searches.
+Rabbit Hole Detector - Prevents AI from drifting off-topic during web searches.
 
 Two checks:
   1. Query alignment: TF-IDF cosine similarity between the original user prompt
@@ -21,7 +21,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 @dataclass
 class AlignmentResult:
-    similarity_score: float        # 0.0 – 1.0
+    similarity_score: float        # 0.0 - 1.0
     is_relevant: bool              # True if score >= threshold
     flagged_domains: List[str]     # domains that failed reputation check
     recommendation: str            # "proceed", "warn_query_drift", "block_irrelevant"
@@ -167,7 +167,7 @@ def check_domain_relevance(
         if _is_blocklisted(domain) and not _is_allowlisted(domain):
             flagged.append(domain)
         elif not _is_allowlisted(domain):
-            # Unknown domain — not flagged but also not trusted
+            # Unknown domain - not flagged but also not trusted
             pass
 
     is_relevant = len(flagged) == 0

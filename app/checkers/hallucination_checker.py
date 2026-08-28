@@ -1,5 +1,5 @@
 """
-Hallucination Checker — Heuristic-based hallucination detection.
+Hallucination Checker - Heuristic-based hallucination detection.
 
 Evaluates AI responses for hallucination signals:
   - Hedging phrase ratio ("I think", "probably", "might be")
@@ -19,7 +19,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 @dataclass
 class HallucinationResult:
-    confidence_score: float          # 0.0 – 1.0 (how confident the AI sounds)
+    confidence_score: float          # 0.0 - 1.0 (how confident the AI sounds)
     hedging_ratio: float             # ratio of hedging phrases in text
     contradiction_detected: bool     # conflicting statements found
     fabrication_signals: List[str]   # fake URLs, non-existent citations
@@ -67,7 +67,7 @@ _FAKE_URL_DOMAINS = [
 
 _URL_PATTERN = re.compile(r'https?://[^\s,)]+')
 
-# DOI should match 10.NNNN/... — flag if it doesn't look right
+# DOI should match 10.NNNN/... - flag if it doesn't look right
 _DOI_PATTERN = re.compile(r'\b10\.\d{4,}/\S+')
 _FAKE_DOI_PATTERN = re.compile(r'\b10\.(?:0000|1234|9999)/\S+')
 
@@ -145,7 +145,7 @@ def check_hallucination(response_text: str, original_prompt: str) -> Hallucinati
     # Confidence score: inverse of hedging (more hedging = less confident)
     confidence_score = max(0.0, 1.0 - hedging_ratio)
 
-    # Contradiction detection — simple heuristic: look for "but", "however"
+    # Contradiction detection - simple heuristic: look for "but", "however"
     # following a definitive statement, then contradicting it
     contradiction_detected = False
     text_lower = response_text.lower()

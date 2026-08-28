@@ -26,7 +26,7 @@ def _make_event(session_id="test-session", final_action="allow", turn=1, tokens=
 
 
 def test_log_event_stored_in_buffer(logger):
-    """Log event — stored in ring buffer."""
+    """Log event - stored in ring buffer."""
     event = _make_event()
     event_hash = logger.log_event(event)
     assert len(logger.get_recent(50)) == 1
@@ -35,7 +35,7 @@ def test_log_event_stored_in_buffer(logger):
 
 
 def test_hash_chain_integrity(logger):
-    """Hash chain — event.prev_hash matches SHA-256 of previous event."""
+    """Hash chain - event.prev_hash matches SHA-256 of previous event."""
     event1 = _make_event(turn=1)
     hash1 = logger.log_event(event1)
 
@@ -49,7 +49,7 @@ def test_hash_chain_integrity(logger):
 
 
 def test_ring_buffer_overflow(logger):
-    """Ring buffer overflow — after 1001 events, buffer still has 1000."""
+    """Ring buffer overflow - after 1001 events, buffer still has 1000."""
     small_logger = AuditLogger(buffer_size=1000)
     for i in range(1001):
         event = _make_event(turn=i)
@@ -60,7 +60,7 @@ def test_ring_buffer_overflow(logger):
 
 
 def test_get_recent_returns_last_n(logger):
-    """get_recent(5) — returns last 5 events in chronological order."""
+    """get_recent(5) - returns last 5 events in chronological order."""
     for i in range(10):
         event = _make_event(turn=i, tokens=i * 10)
         logger.log_event(event)
@@ -73,7 +73,7 @@ def test_get_recent_returns_last_n(logger):
 
 
 def test_no_raw_pii_in_log(logger):
-    """No raw PII in log — assert no credit card numbers or SSNs in serialized JSON."""
+    """No raw PII in log - assert no credit card numbers or SSNs in serialized JSON."""
     rule = RuleTriggered(
         checker="pii_scanner",
         category="CREDIT_CARD",

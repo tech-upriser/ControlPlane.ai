@@ -1,17 +1,17 @@
 """
-Loop Breaker — Detects repetitive agent behavior using a sliding window.
+Loop Breaker - Detects repetitive agent behavior using a sliding window.
 
 Algorithm:
   1. Take last N entries from action_history
   2. Vectorize all entries using TF-IDF
   3. Compute pairwise cosine similarity matrix
   4. Average the upper triangle (excluding diagonal)
-  5. If average > threshold → loop detected
+  5. If average > threshold -> loop detected
 
 Action escalation:
-  score > 0.95 → "kill"
-  score > threshold → "warn"
-  else → "continue"
+  score > 0.95 -> "kill"
+  score > threshold -> "warn"
+  else -> "continue"
 
 Dependencies: scikit-learn (for TF-IDF), Python stdlib.
 """
@@ -27,7 +27,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 @dataclass
 class LoopDetectionResult:
     is_loop: bool
-    repetition_score: float        # 0.0 – 1.0 (avg pairwise similarity)
+    repetition_score: float        # 0.0 - 1.0 (avg pairwise similarity)
     window_size: int
     recommended_action: str        # "continue", "warn", "kill"
 

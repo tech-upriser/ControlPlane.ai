@@ -1,16 +1,16 @@
 """
-Injection Detector — Multi-layer prompt injection and jailbreak detection.
+Injection Detector - Multi-layer prompt injection and jailbreak detection.
 
 Detection layers:
-  1. Direct injection — "ignore previous instructions", "forget everything above"
-  2. Jailbreak / role hijacking — "you are now DAN", "developer mode enabled"
-  3. Encoding attacks — Base64, ROT13, hex-encoded payloads (decoded and re-scanned)
-  4. Indirect injection — zero-width Unicode characters, HTML comments
+  1. Direct injection - "ignore previous instructions", "forget everything above"
+  2. Jailbreak / role hijacking - "you are now DAN", "developer mode enabled"
+  3. Encoding attacks - Base64, ROT13, hex-encoded payloads (decoded and re-scanned)
+  4. Indirect injection - zero-width Unicode characters, HTML comments
 
 Uses full-phrase matching to avoid false positives: "ignore the noise in this data"
 should NOT trigger, but "ignore previous instructions" should.
 
-Zero external dependencies — uses only Python stdlib.
+Zero external dependencies - uses only Python stdlib.
 """
 
 import re
@@ -24,7 +24,7 @@ from typing import List, Optional
 class InjectionResult:
     is_injection: bool
     injection_type: Optional[str]   # "direct", "jailbreak", "encoding", "indirect"
-    confidence: float               # 0.0 – 1.0
+    confidence: float               # 0.0 - 1.0
     matched_patterns: List[str]     # which patterns triggered
 
 
@@ -111,7 +111,7 @@ def decode_and_scan(text: str) -> List[str]:
         except Exception:
             pass
 
-    # ROT13 detection — always try ROT13 decoding on the full text
+    # ROT13 detection - always try ROT13 decoding on the full text
     # and on any words that look like they could be encoded
     try:
         rot13_decoded = codecs.decode(text, 'rot_13')
