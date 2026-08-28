@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ControlPlane.ai",
-  "version": "1.0",
-  "description": "Core Interception & DOM Manipulation for ControlPlane.ai",
+  "version": "1.2.0",
+  "description": "Enterprise AI Guardrail - Real-time confidence scoring and safety analysis for AI chat interfaces",
   "permissions": [
     "activeTab",
     "scripting",
@@ -12,6 +12,8 @@
   ],
   "host_permissions": [
     "*://*.chatgpt.com/*",
+    "*://*.claude.ai/*",
+    "*://*.gemini.google.com/*",
     "http://localhost:8000/*"
   ],
   "background": {
@@ -19,11 +21,24 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.chatgpt.com/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
+      "matches": [
+        "*://*.chatgpt.com/*",
+        "*://*.claude.ai/*",
+        "*://*.gemini.google.com/*"
+      ],
+      "js": [
+        "platforms/platform_adapter.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
     }
   ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "action": {
     "default_title": "Open ControlPlane"
   }
