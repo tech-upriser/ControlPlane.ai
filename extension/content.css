@@ -1,65 +1,346 @@
-/* Confidence Bar */
-.cp-confidence-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f0f0f0;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-family: sans-serif;
-  font-size: 14px;
-  color: #333;
-  border-left: 4px solid #4CAF50;
+/* ════════════════════════════════════════════════════════════
+   ControlPlane.ai — Content Script Styles
+   Inline confidence bar, semantic highlights, badges & banners
+   Matches the visual language from Screenshots 2, 5 & 6
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Reset for injected elements ── */
+.cp-header-bar,
+.cp-header-bar *,
+.cp-badge,
+.cp-blocked-banner,
+.cp-blocked-banner * {
+  box-sizing: border-box !important;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif !important;
+  line-height: 1.45 !important;
 }
 
+
+/* ═══════════════════════════════════════
+   CONFIDENCE HEADER BAR
+   Dark glass panel above each AI response
+   ═══════════════════════════════════════ */
+
+.cp-header-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(26, 35, 45, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 10px 16px !important;
+  margin-bottom: 14px !important;
+  margin-top: 4px !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  z-index: 9000 !important;
+  transition: all 0.35s ease !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.cp-header-bar:hover {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.cp-header-left {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.cp-header-title {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
+}
+
+.cp-header-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+}
+
+.cp-header-score {
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  transition: color 0.3s ease !important;
+}
+
+
+/* ── Gradient Meter ── */
+
+.cp-gradient-bar {
+  width: 100% !important;
+  height: 6px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-radius: 3px !important;
+  overflow: hidden !important;
+}
+
+.cp-gradient-fill {
+  height: 100% !important;
+  background: linear-gradient(
+    to right,
+    #22c55e 0%,
+    #4ade80 18%,
+    #a3e635 32%,
+    #facc15 48%,
+    #f97316 72%,
+    #ef4444 100%
+  ) !important;
+  border-radius: 3px !important;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-width: 0 !important;
+}
+
+
+/* ── Deep Dive Button ── */
+
 .cp-deep-dive-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 7px 14px !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  margin-left: 14px !important;
+  flex-shrink: 0 !important;
 }
 
 .cp-deep-dive-btn:hover {
-  background-color: #0056b3;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Glowing Highlights */
-.cp-high-confidence {
-  background: rgba(0, 255, 0, 0.1);
-  border: 1px solid green;
-  box-shadow: 0 0 10px green;
-  border-radius: 4px;
-  padding: 2px;
+.cp-deep-dive-btn:active {
+  transform: translateY(0) !important;
 }
 
-.cp-high-cost {
-  background: rgba(255, 165, 0, 0.1);
-  border: 1px solid orange;
-  box-shadow: 0 0 10px orange;
-  border-radius: 4px;
-  padding: 2px;
+.cp-bar-icon {
+  font-size: 15px !important;
+  opacity: 0.85 !important;
 }
 
-.cp-hallucination {
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid red;
-  box-shadow: 0 0 10px red;
-  border-radius: 4px;
-  padding: 2px;
+.cp-arrow {
+  font-size: 16px !important;
+  font-weight: 300 !important;
+  opacity: 0.7 !important;
 }
 
-/* Blocked Box */
-.cp-blocked-box {
-  background: rgba(255, 0, 0, 0.2);
-  border: 2px solid red;
-  box-shadow: 0 0 15px red;
-  color: red;
-  font-weight: bold;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
+
+/* ── Offline / Error State ── */
+
+.cp-header-bar.cp-offline {
+  background: rgba(45, 28, 28, 0.95) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.cp-header-bar.cp-offline .cp-header-label {
+  color: rgba(248, 113, 113, 0.85) !important;
+}
+
+.cp-header-bar.cp-offline .cp-deep-dive-btn {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+
+/* ═══════════════════════════════════════
+   SEMANTIC PARAGRAPH HIGHLIGHTS
+   Applied to individual paragraphs in the AI response
+   ═══════════════════════════════════════ */
+
+.cp-segment-wrapper {
+  position: relative !important;
+  transition: all 0.4s ease !important;
+}
+
+/* Clearfix for floated badges */
+.cp-segment-wrapper::after {
+  content: '' !important;
+  display: table !important;
+  clear: both !important;
+}
+
+
+/* ── Verified / High Confidence ── */
+
+.cp-segment-verified {
+  background: rgba(34, 197, 94, 0.05) !important;
+  border-left: 3px solid rgba(34, 197, 94, 0.55) !important;
+  padding-left: 14px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  border-radius: 0 6px 6px 0 !important;
+  margin: 6px 0 !important;
+}
+
+
+/* ── Ambiguous / High Cost ── */
+
+.cp-segment-ambiguous {
+  background: rgba(249, 115, 22, 0.04) !important;
+  border-left: 3px solid rgba(249, 115, 22, 0.55) !important;
+  border-bottom: 2px dashed rgba(249, 115, 22, 0.35) !important;
+  padding-left: 14px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  border-radius: 0 6px 6px 0 !important;
+  margin: 6px 0 !important;
+}
+
+
+/* ── Hallucination Detected ── */
+
+.cp-segment-hallucination {
+  background: rgba(239, 68, 68, 0.06) !important;
+  border: 2px dashed rgba(239, 68, 68, 0.50) !important;
+  padding: 12px 14px !important;
+  border-radius: 8px !important;
+  margin: 10px 0 !important;
+  position: relative !important;
+}
+
+
+/* ═══════════════════════════════════════
+   CLASSIFICATION BADGES
+   Pill-shaped labels, right-aligned after paragraphs
+   ═══════════════════════════════════════ */
+
+.cp-badge {
+  display: inline-block !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 10px !important;
+  border-radius: 12px !important;
+  margin-top: 6px !important;
+  float: right !important;
+  clear: both !important;
+  letter-spacing: 0.02em !important;
+  pointer-events: none !important;
+}
+
+.cp-badge-verified {
+  background: rgba(34, 197, 94, 0.14) !important;
+  color: #4ade80 !important;
+  border: 1px solid rgba(34, 197, 94, 0.28) !important;
+}
+
+.cp-badge-ambiguous {
+  background: rgba(249, 115, 22, 0.14) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(249, 115, 22, 0.28) !important;
+}
+
+.cp-badge-hallucination {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+}
+
+
+/* ═══════════════════════════════════════
+   BLOCKED BANNER
+   Replaces a paragraph when the Block action fires
+   ═══════════════════════════════════════ */
+
+.cp-blocked-banner {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(239, 68, 68, 0.07) !important;
+  border: 2px dashed rgba(239, 68, 68, 0.55) !important;
+  border-radius: 10px !important;
+  padding: 16px 20px !important;
+  margin: 10px 0 !important;
+  color: #fca5a5 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  animation: cp-flash-in 0.4s ease !important;
+}
+
+.cp-blocked-icon {
+  font-size: 24px !important;
+  flex-shrink: 0 !important;
+}
+
+.cp-blocked-text {
+  flex: 1 !important;
+  line-height: 1.4 !important;
+}
+
+.cp-blocked-status {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171 !important;
+  padding: 2px 10px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  flex-shrink: 0 !important;
+}
+
+
+/* ═══════════════════════════════════════
+   STATE TRANSITIONS & ANIMATIONS
+   ═══════════════════════════════════════ */
+
+/* Reword: red → green glow transition */
+.cp-segment-reworded {
+  animation: cp-reword-glow 1.8s ease !important;
+}
+
+@keyframes cp-reword-glow {
+  0% {
+    background: rgba(34, 197, 94, 0.22) !important;
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.3) !important;
+  }
+  100% {
+    background: rgba(34, 197, 94, 0.05) !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Block: flash in */
+@keyframes cp-flash-in {
+  0% {
+    opacity: 0 !important;
+    transform: scale(0.97) !important;
+  }
+  100% {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* Confidence bar updated after Reword */
+.cp-header-bar.cp-updated {
+  border-color: rgba(34, 197, 94, 0.35) !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.1) !important;
+}
+
+/* Confidence bar updated after Block */
+.cp-header-bar.cp-blocked-state {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+.cp-header-bar.cp-blocked-state .cp-header-score {
+  color: #f87171 !important;
 }
