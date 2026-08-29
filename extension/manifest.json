@@ -27,6 +27,7 @@
         "*://*.gemini.google.com/*"
       ],
       "js": [
+        "theme-sync.js",
         "platforms/platform_adapter.js",
         "content.js"
       ],
