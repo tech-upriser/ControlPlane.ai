@@ -114,7 +114,7 @@ function handleBlock() {
     let targetIndex = segments.findIndex(
         (s, i) => !state.blockedSegments.has(i) && (s.classification === 'hallucination' || s.classification === 'ambiguous')
     );
-    if (targetIndex === -1) targetIndex = 0;
+    if (targetIndex === -1) return;
 
     state.blockedSegments.add(targetIndex);
     state.status = 'blocked';
@@ -169,9 +169,24 @@ function renderEvaluation(data) {
     state.blockedSegments.clear();
     state.rewordedSegments.clear();
 
-    // Reset button states
+    // Determine if there are actionable segments
+    const hasIssues = (data.segments || []).some(s => s.classification === 'hallucination' || s.classification === 'ambiguous');
+
+    // Update button states
     els.btnBlock.classList.remove('active-action');
     els.btnReword.classList.remove('active-action');
+    
+    if (!hasIssues) {
+        els.btnBlock.style.opacity = '0.5';
+        els.btnBlock.style.cursor = 'not-allowed';
+        els.btnReword.style.opacity = '0.5';
+        els.btnReword.style.cursor = 'not-allowed';
+    } else {
+        els.btnBlock.style.opacity = '1';
+        els.btnBlock.style.cursor = 'pointer';
+        els.btnReword.style.opacity = '1';
+        els.btnReword.style.cursor = 'pointer';
+    }
 
     // Confidence
     updateConfidence(data.overall_confidence + '%', 'normal');
