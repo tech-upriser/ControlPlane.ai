@@ -551,15 +551,18 @@
     if (!a || !b) return 0;
     // Full containment
     if (a.includes(b) || b.includes(a)) return 1.0;
-    // Prefix comparison (first 80 characters)
-    const len = Math.min(80, a.length, b.length);
-    const prefA = a.substring(0, len);
-    const prefB = b.substring(0, len);
-    let matches = 0;
-    for (let i = 0; i < len; i++) {
-      if (prefA[i] === prefB[i]) matches++;
+    
+    // Word overlap index (handles formatting/prefix shifts better)
+    const wordsA = new Set(a.split(/\\s+/).filter(w => w.length > 2));
+    const wordsB = new Set(b.split(/\\s+/).filter(w => w.length > 2));
+    if (wordsA.size === 0 || wordsB.size === 0) return 0;
+    
+    let intersection = 0;
+    for (let word of wordsA) {
+      if (wordsB.has(word)) intersection++;
     }
-    return matches / len;
+    
+    return intersection / Math.min(wordsA.size, wordsB.size);
   }
 
   // ═══════════════════════════════════════════
