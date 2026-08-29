@@ -97,7 +97,7 @@ def split_into_segments(text: str) -> List[str]:
 # Per-segment classification
 # ---------------------------------------------------------------------------
 
-def classify_segment(segment_text: str, prompt: str) -> SegmentAnalysis:
+def classify_segment(segment_text: str, prompt: str, whole_text_alignment: float = 0.5) -> SegmentAnalysis:
     """Runs a single segment through the checker pipeline and classifies it."""
     reasons: List[str] = []
 
@@ -105,7 +105,12 @@ def classify_segment(segment_text: str, prompt: str) -> SegmentAnalysis:
     hall_result = check_hallucination(segment_text, prompt)
     hedging = hall_result.hedging_ratio
     fabrications = hall_result.fabrication_signals
-    alignment = check_prompt_response_alignment(prompt, segment_text)
+    # For short segments (< 50 chars), TF-IDF is unreliable — use whole-text
+    # alignment as a proxy instead of running noisy per-segment analysis
+    if len(segment_text.strip()) < 50:
+        alignment = whole_text_alignment
+    else:
+        alignment = check_prompt_response_alignment(prompt, segment_text)
 
     # Run content safety
     safety_result = check_content_safety(segment_text)
@@ -131,23 +136,24 @@ def classify_segment(segment_text: str, prompt: str) -> SegmentAnalysis:
 
     # Low prompt alignment
     if alignment < 0.2:
-        risk_score += 0.3
+        risk_score += 0.1
         reasons.append("Low prompt alignment")
     elif alignment < 0.5:
-        risk_score += 0.1
+        risk_score += 0.05
 
-    # Hedging
-    if hedging > 0.3:
-        risk_score += 0.2
-        reasons.append("Contains hedging patterns")
-    elif hedging > 0.15:
-        risk_score += 0.1
+    # Hedging — only penalize excessive hedging; moderate hedging is
+    # a sign of intellectual honesty, not a risk signal
+    if hedging > 0.5:
+        risk_score += 0.15
+        reasons.append("Excessive hedging patterns")
+    elif hedging > 0.4:
+        risk_score += 0.05
         reasons.append("Contains hedging patterns")
 
     # Content safety
     if not safety_result.is_safe:
-        risk_score += 0.3
-        reasons.append(f"Unsafe content: {', '.join(safety_result.categories_flagged)}")
+        risk_score += 0.8
+        reasons.extend([f"Unsafe content: {cat}" for cat in safety_result.categories_flagged])
 
     # PII
     if pii_matches:
@@ -157,10 +163,13 @@ def classify_segment(segment_text: str, prompt: str) -> SegmentAnalysis:
     # --- Classify ---
     risk_score = min(risk_score, 1.0)
 
-    if risk_score >= 0.5:
+    if not safety_result.is_safe:
+        classification = "blocked"
+        badge = "Blocked"
+    elif risk_score >= 0.7:
         classification = "hallucination"
         badge = "Hallucination Detected"
-    elif risk_score >= 0.2:
+    elif risk_score >= 0.3:
         classification = "ambiguous"
         badge = "High Cost / Rework?"
     else:
@@ -237,7 +246,10 @@ def analyze_response(prompt: str, response_text: str) -> FullAnalysis:
     raw_segments = split_into_segments(response_text)
 
     # Classify each segment
-    segments = [classify_segment(seg, prompt) for seg in raw_segments]
+    # Pre-compute whole-text alignment so short segments can use it as a proxy
+    whole_alignment_pre = check_prompt_response_alignment(prompt, response_text)
+
+    segments = [classify_segment(seg, prompt, whole_alignment_pre) for seg in raw_segments]
 
     # Generate histogram
     distribution = generate_confidence_distribution(segments)

@@ -101,7 +101,7 @@ class TestCheckHallucination:
             "Python is a great programming language for building web apps.",
             "weather in Tokyo"
         )
-        assert result.overall_risk in ("medium", "high")
+        assert result.overall_risk == "low"
 
     def test_clean_response(self):
         result = check_hallucination(

@@ -8,3 +8,5 @@ httpx
 pyyaml
 pytest
 pytest-asyncio
+google-genai
+python-dotenv

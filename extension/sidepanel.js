@@ -34,6 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
         cost: { score: 0 },
         responsibility: { score: 0 }
     });
+
+    // Request cached evaluation from background.js
+    // This handles the case where the side panel opens AFTER evaluation completed
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        chrome.runtime.sendMessage({ action: 'getLatestEvaluation' }, (response) => {
+            if (chrome.runtime.lastError) return;
+            if (response && response.ok && response.data) {
+                renderEvaluation(response.data);
+            }
+        });
+    }
 });
 
 // ===== TAB NAVIGATION =====
@@ -319,7 +330,7 @@ function getSubMetricValues(name, data) {
         return [
             { label: 'Accuracy', value: sm.accuracy || 0 },
             { label: 'Hallucination risks', value: sm.hallucination_risks || 0 },
-            { label: 'Hallucination risks', value: sm.prompt_alignment ? Math.round(sm.prompt_alignment * -100) : 0 },
+            { label: 'Prompt Alignment', value: sm.prompt_alignment ? Math.round(sm.prompt_alignment * 100) : 0 },
         ];
     } else if (name === 'cost') {
         return [
@@ -330,8 +341,6 @@ function getSubMetricValues(name, data) {
         ];
     } else if (name === 'responsibility') {
         return [
-            { label: 'Hate Speech', value: sm.hate_speech || 0 },
-            { label: 'PII Leaks', value: sm.pii_leaks || 0 },
             { label: 'Hate Speech', value: sm.hate_speech || 0 },
             { label: 'PII Leaks', value: sm.pii_leaks || 0 },
             { label: 'Bias Detection', value: sm.bias_detection || 0 },

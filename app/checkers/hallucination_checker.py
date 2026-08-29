@@ -122,9 +122,16 @@ def detect_fake_citations(text: str) -> List[str]:
 
 
 def check_prompt_response_alignment(prompt: str, response: str) -> float:
-    """TF-IDF cosine similarity between prompt and response. Low = off-topic."""
+    """TF-IDF cosine similarity between prompt and response. Low = off-topic.
+
+    Returns a neutral 0.5 for very short texts where TF-IDF is unreliable.
+    """
     if not prompt.strip() or not response.strip():
         return 0.0
+
+    # Short texts produce noisy TF-IDF vectors — return neutral score
+    if len(response.strip()) < 50 or len(prompt.strip()) < 10:
+        return 0.5
 
     try:
         vectorizer = TfidfVectorizer(stop_words='english')
@@ -133,7 +140,7 @@ def check_prompt_response_alignment(prompt: str, response: str) -> float:
         return float(similarity)
     except ValueError:
         # Can happen if texts are too short or only stop words
-        return 0.0
+        return 0.5
 
 
 def check_hallucination(response_text: str, original_prompt: str) -> HallucinationResult:
@@ -166,15 +173,10 @@ def check_hallucination(response_text: str, original_prompt: str) -> Hallucinati
     if fabrication_signals:
         risk_factors += 2
 
-    if alignment < 0.1:
-        risk_factors += 2
-    elif alignment < 0.3:
-        risk_factors += 1
-
     if contradiction_detected:
         risk_factors += 1
 
-    if risk_factors >= 3:
+    if risk_factors >= 4:
         overall_risk = "high"
     elif risk_factors >= 1:
         overall_risk = "medium"

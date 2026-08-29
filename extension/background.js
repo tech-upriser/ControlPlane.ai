@@ -14,6 +14,13 @@
 const API_BASE = 'http://localhost:8000';
 
 // ═══════════════════════════════════════════
+// Evaluation State Cache
+// Stores the latest evaluation so the side panel
+// can retrieve it even when opened after evaluation.
+// ═══════════════════════════════════════════
+let latestEvaluation = null;
+
+// ═══════════════════════════════════════════
 // Extension Lifecycle
 // ═══════════════════════════════════════════
 chrome.runtime.onInstalled.addListener(() => {
@@ -48,6 +55,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ ok: true });
       break;
 
+    // ── Side Panel requests cached evaluation ──
+    case 'getLatestEvaluation':
+      sendResponse({ ok: true, data: latestEvaluation });
+      break;
+
     // ── Future: Enterprise escalation ──
     case 'escalateSegment':
       sendResponse({ ok: false, reason: 'Escalation is an enterprise feature (coming soon)' });
@@ -78,6 +90,9 @@ async function handleEvaluate(message, tabId, sendResponse) {
     console.warn('[ControlPlane BG] Backend unreachable — using local mock:', err.message);
     evalData = generateMockEvaluation(prompt, responseText);
   }
+
+  // Cache the evaluation for late-opening side panel
+  latestEvaluation = evalData;
 
   // Broadcast to content script (tab)
   if (tabId) {

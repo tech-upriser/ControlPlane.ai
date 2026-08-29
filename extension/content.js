@@ -328,6 +328,8 @@
     const matches = matchSegmentsToParagraphs(data.segments, paragraphs);
 
     matches.forEach(({ segment, element, index }) => {
+      let effectiveClassification = segment.classification;
+
       // Apply classification class
       const classMap = {
         verified: 'cp-segment-verified',
@@ -335,7 +337,7 @@
         hallucination: 'cp-segment-hallucination',
       };
 
-      const className = classMap[segment.classification];
+      const className = classMap[effectiveClassification];
       if (className) {
         element.classList.add('cp-segment-wrapper', className);
       }
@@ -343,14 +345,24 @@
       // Track segment index for action routing
       element.setAttribute(CONFIG.ATTR_SEGMENT, String(index));
 
-      // Append badge
-      if (segment.badge) {
-        const badge = createBadge(segment.badge, segment.classification);
+      // Append badge — use the effective classification's badge
+      const badgeMap = {
+        verified: 'High Confidence',
+        ambiguous: 'High Cost / Rework?',
+        hallucination: 'Hallucination Detected',
+      };
+      const badgeText = badgeMap[effectiveClassification] || segment.badge;
+      if (badgeText) {
+        const badge = createBadge(badgeText, effectiveClassification);
         element.appendChild(badge);
       }
 
       // Store reference for action handlers
       evalState.segmentEls[index] = element;
+
+      if (effectiveClassification === 'blocked') {
+        handleBlockSegment(evalState.data.evaluation_id, index);
+      }
     });
   }
 

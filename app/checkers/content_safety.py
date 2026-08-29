@@ -85,6 +85,10 @@ _DANGEROUS_PATTERNS = [
     r"steal credentials",
     r"forge identity",
     r"counterfeit money",
+    r"ignore professional medical",
+    r"increase the dose",
+    r"build immunity",
+    r"self-medicate",
 ]
 
 # Pre-compile all patterns into category groups
