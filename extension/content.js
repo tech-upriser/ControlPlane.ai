@@ -43,9 +43,6 @@
   // Initialization
   // ═══════════════════════════════════════════
   function init() {
-    if (window.ControlPlaneTheme) {
-      window.ControlPlaneTheme.initContentScript();
-    }
     if (!window.ControlPlanePlatform) {
       console.error('[ControlPlane] Platform adapter not loaded — aborting');
       return;

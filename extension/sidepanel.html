@@ -12,10 +12,9 @@
         <div class="header-left">
             <span class="header-icon">🛡️</span>
             <span class="header-title">ControlPlane</span>
-            <span class="header-version">v1.5.0</span>
+            <span class="header-version">v1.2.0</span>
         </div>
         <div class="header-right">
-            <button class="theme-toggle" id="theme-toggle-btn" title="Cycle Theme: Sync / Light / Dark">🌓</button>
             <a href="#" class="header-link" id="btn-maximize">Maximize</a>
             <button class="header-close" id="btn-close">✕</button>
         </div>
@@ -33,27 +32,16 @@
     <!-- Tab Content: Overview -->
     <div id="tab-content-overview" class="tab-content active">
 
-        <!-- Overall Confidence Card -->
-        <div id="confidence-section" class="card-section confidence-card">
+        <!-- Overall Confidence -->
+        <div id="confidence-section" class="section">
             <div class="section-header-row">
-                <div class="section-title-wrap">
-                    <span class="section-label">Overall Confidence</span>
-                    <span class="info-icon" title="ControlPlane's composite confidence score based on accuracy, cost, and safety.">ⓘ</span>
-                </div>
-                <a href="#" class="section-link" id="how-calculated">How is this calculated?</a>
+                <span class="section-label">Overall Confidence <span class="info-icon">ⓘ</span></span>
+                <a href="#" class="section-link" id="how-calculated">How is this contributed?</a>
             </div>
             <div class="confidence-display">
                 <div class="confidence-score-area">
-                    <div class="confidence-ring-container" style="position: relative; width: 88px; height: 88px;">
-                        <svg class="confidence-ring" viewBox="0 0 36 36">
-                            <circle class="ring-track" cx="18" cy="18" r="15.5" />
-                            <circle class="ring-progress" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
-                        </svg>
-                        <div class="confidence-value-wrap">
-                            <span id="confidence-value" class="confidence-value">--%</span>
-                        </div>
-                    </div>
-                    <span id="confidence-status" class="confidence-status status-good">High Confidence</span>
+                    <span id="confidence-value" class="confidence-value">72%</span>
+                    <span id="confidence-sublabel" class="confidence-sublabel">Overall</span>
                 </div>
                 <div class="histogram-area">
                     <div id="histogram" class="histogram">
@@ -61,28 +49,21 @@
                     </div>
                     <div class="histogram-scale">
                         <span>0%</span>
-                        <span class="histogram-legend">Distribution</span>
                         <span>100%</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Dimensions Card -->
-        <div id="dimensions-section" class="card-section dimensions-card">
-            <div class="section-header-row">
-                <div class="section-title-wrap">
-                    <span class="section-label">Dimensions</span>
-                    <span class="info-icon" title="Specific metric dimensions evaluated by ControlPlane.">ⓘ</span>
-                </div>
-            </div>
+        <!-- Dimensions -->
+        <div id="dimensions-section" class="section">
+            <div class="section-label">Dimensions <span class="info-icon">ⓘ</span></div>
 
             <!-- Performance -->
             <div class="dimension" data-dimension="performance">
                 <div class="dimension-header">
                     <span class="dimension-icon perf-icon">✅</span>
                     <span class="dimension-label">Performance (Reliability)</span>
-                    <span class="dimension-status status-good" id="status-performance">--</span>
                     <svg class="ring-indicator" viewBox="0 0 36 36">
                         <circle class="ring-bg" cx="18" cy="18" r="15.5" />
                         <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
@@ -102,7 +83,6 @@
                 <div class="dimension-header">
                     <span class="dimension-icon cost-icon">💰</span>
                     <span class="dimension-label">Cost (Efficiency)</span>
-                    <span class="dimension-status status-good" id="status-cost">--</span>
                     <svg class="ring-indicator" viewBox="0 0 36 36">
                         <circle class="ring-bg" cx="18" cy="18" r="15.5" />
                         <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
@@ -123,7 +103,6 @@
                 <div class="dimension-header">
                     <span class="dimension-icon resp-icon">🛡️</span>
                     <span class="dimension-label">Responsibility</span>
-                    <span class="dimension-status status-good" id="status-responsibility">--</span>
                     <svg class="ring-indicator" viewBox="0 0 36 36">
                         <circle class="ring-bg" cx="18" cy="18" r="15.5" />
                         <circle class="ring-fill" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" />
@@ -153,32 +132,21 @@
             <p><strong>Racial Bias:</strong> <span id="popover-racial">Low</span></p>
             <p><strong>Political Neutrality:</strong> <span id="popover-political" class="warning-text">Fair (Warning)</span></p>
             <p class="popover-detail">Patterns neutralize biases</p>
-            <p class="popover-detail">Inference is provided token flow studies.</p>
+            <p class="popover-detail">Inference is provided token flo studies.</p>
             <a href="#" class="popover-link">View Audit/More</a>
         </div>
 
-        <!-- Checks Card -->
-        <div id="checks-section" class="card-section checks-card">
+        <!-- Checks -->
+        <div id="checks-section" class="section">
             <div class="section-header-row">
-                <div class="section-title-wrap">
-                    <span class="section-label">Checks</span>
-                    <span class="info-icon" title="Automatic policy compliance checks.">ⓘ</span>
-                </div>
-                <div class="checks-status-wrap" style="display: flex; align-items: center; gap: 8px;">
-                    <span class="checks-status color-green" id="checks-status">✓ All checks passed</span>
-                    <button class="checks-expand-btn" id="btn-expand-checks">Details</button>
-                </div>
-            </div>
-            <div class="checks-detail" id="checks-detail">
-                <ul class="checks-detail-list">
-                    <!-- Dynamically rendered by JS -->
-                </ul>
+                <span class="section-label">Checks <span class="info-icon">ⓘ</span></span>
+                <span class="checks-status" id="checks-status">All passes <span class="info-icon">ⓘ</span></span>
             </div>
         </div>
 
-        <!-- Actions Card -->
-        <div id="actions-section" class="card-section actions-card">
-            <span class="section-label">Actions</span>
+        <!-- Actions -->
+        <div id="actions-section" class="section">
+            <div class="section-label">Actions</div>
             <div class="action-buttons">
                 <button id="btn-block" class="action-btn btn-block">
                     <span class="btn-icon">🚫</span> Block
@@ -189,48 +157,6 @@
                 <button id="btn-escalate" class="action-btn btn-escalate" disabled title="Enterprise feature — coming soon">
                     <span class="btn-icon">⚡</span> Escalate
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tab Content: Settings -->
-    <div id="tab-content-settings" class="tab-content">
-        <div class="settings-section">
-            <div class="settings-group">
-                <div class="settings-group-title">Theming &amp; Appearance</div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <div class="setting-label">Interface Theme</div>
-                        <div class="setting-description">Choose ControlPlane's theme or sync with ChatGPT/Gemini.</div>
-                    </div>
-                    <div class="theme-selector" id="theme-selector">
-                        <button class="theme-option" data-theme-mode="auto">Host Sync</button>
-                        <button class="theme-option" data-theme-mode="light">Light</button>
-                        <button class="theme-option" data-theme-mode="dark">Dark</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="settings-group">
-                <div class="settings-group-title">Evaluation Settings</div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <div class="setting-label">Real-time Scanning</div>
-                        <div class="setting-description">Evaluate responses automatically during chat.</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <span class="color-green" style="font-weight: 600;">Enabled</span>
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <div class="setting-label">Safety Guardrails</div>
-                        <div class="setting-description">Highlight potential hallucination and safety risks.</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <span class="color-green" style="font-weight: 600;">Active</span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -246,12 +172,11 @@
 
     <!-- Footer -->
     <div id="footer">
-        <span class="footer-status"><span class="footer-dot"></span>ControlPlane v1.5.0</span>
+        <span class="footer-status">● ControlPlane v1.5.0</span>
         <span class="footer-badge">Beta</span>
         <a href="#" class="footer-link">Report Issue</a>
     </div>
 
-    <script src="theme-sync.js"></script>
     <script src="sidepanel.js"></script>
 </body>
 </html>

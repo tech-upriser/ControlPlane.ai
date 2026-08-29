@@ -9,7 +9,7 @@ const state = {
 // ===== DOM REFS =====
 const els = {
     confidenceValue: document.getElementById('confidence-value'),
-    confidenceStatus: document.getElementById('confidence-status'),
+    confidenceSublabel: document.getElementById('confidence-sublabel'),
     histogram: document.getElementById('histogram'),
     checksStatus: document.getElementById('checks-status'),
     biasPopover: document.getElementById('bias-popover'),
@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAccordions();
     initActions();
     initBiasPopover();
-    initChecksExpanded();
-    initThemeControls();
-    initWindowControls();
 
     // Reset UI to empty state waiting for evaluation
     updateConfidence('--%', 'normal');
@@ -38,11 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         responsibility: { score: 0 }
     });
 
-    // Disable action buttons initially until evaluation arrives
-    els.btnBlock.disabled = true;
-    els.btnReword.disabled = true;
-
     // Request cached evaluation from background.js
+    // This handles the case where the side panel opens AFTER evaluation completed
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
         chrome.runtime.sendMessage({ action: 'getLatestEvaluation' }, (response) => {
             if (chrome.runtime.lastError) return;
@@ -53,107 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ===== WINDOW CONTROLS =====
-function initWindowControls() {
-    const btnMaximize = document.getElementById('btn-maximize');
-    const btnClose = document.getElementById('btn-close');
-
-    if (btnMaximize) {
-        btnMaximize.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
-                chrome.tabs.create({ url: chrome.runtime.getURL('sidepanel.html') });
-            }
-        });
-    }
-
-    if (btnClose) {
-        btnClose.addEventListener('click', () => {
-            window.close();
-        });
-    }
-}
-
-// ===== THEME CONTROLS =====
-function initThemeControls() {
-    const btnToggle = document.getElementById('theme-toggle-btn');
-    const selector = document.getElementById('theme-selector');
-
-    if (typeof window.ControlPlaneTheme === 'undefined') {
-        console.warn('[ControlPlane] Theme module not loaded');
-        return;
-    }
-
-    // Initialize Theme module
-    window.ControlPlaneTheme.initSidePanel();
-
-    // Header theme toggle button
-    if (btnToggle) {
-        btnToggle.addEventListener('click', () => {
-            const nextMode = window.ControlPlaneTheme.cycleOverride();
-            updateToggleUI(nextMode);
-        });
-    }
-
-    // Settings panel theme selector
-    if (selector) {
-        const options = selector.querySelectorAll('.theme-option');
-        options.forEach(opt => {
-            opt.addEventListener('click', () => {
-                const mode = opt.dataset.themeMode;
-                window.ControlPlaneTheme.setOverride(mode);
-            });
-        });
-    }
-
-    // Listen for theme change events to sync UI state
-    window.addEventListener('themeChanged', (e) => {
-        const override = window.ControlPlaneTheme.getOverride();
-        updateToggleUI(override);
-        updateSelectorUI(override);
-    });
-
-    // Initial UI state setup
-    const initialOverride = window.ControlPlaneTheme.getOverride();
-    updateToggleUI(initialOverride);
-    updateSelectorUI(initialOverride);
-}
-
-function updateToggleUI(mode) {
-    const btnToggle = document.getElementById('theme-toggle-btn');
-    if (!btnToggle) return;
-
-    if (mode === 'auto') {
-        btnToggle.textContent = '🌓';
-        btnToggle.title = 'Theme: Sync / Host';
-    } else if (mode === 'light') {
-        btnToggle.textContent = '☀️';
-        btnToggle.title = 'Theme: Light';
-    } else {
-        btnToggle.textContent = '🌙';
-        btnToggle.title = 'Theme: Dark';
-    }
-}
-
-function updateSelectorUI(mode) {
-    const selector = document.getElementById('theme-selector');
-    if (!selector) return;
-
-    const options = selector.querySelectorAll('.theme-option');
-    options.forEach(opt => {
-        if (opt.dataset.themeMode === mode) {
-            opt.classList.add('active');
-        } else {
-            opt.classList.remove('active');
-        }
-    });
-}
-
 // ===== TAB NAVIGATION =====
 function initTabs() {
     const tabs = document.querySelectorAll('.tab');
     const overviewContent = document.getElementById('tab-content-overview');
-    const settingsContent = document.getElementById('tab-content-settings');
     const placeholderContent = document.getElementById('tab-content-placeholder');
 
     tabs.forEach(tab => {
@@ -161,16 +58,11 @@ function initTabs() {
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
 
-            const target = tab.dataset.tab;
-            overviewContent.classList.remove('active');
-            settingsContent.classList.remove('active');
-            placeholderContent.classList.remove('active');
-
-            if (target === 'overview') {
+            if (tab.dataset.tab === 'overview') {
                 overviewContent.classList.add('active');
-            } else if (target === 'settings') {
-                settingsContent.classList.add('active');
+                placeholderContent.classList.remove('active');
             } else {
+                overviewContent.classList.remove('active');
                 placeholderContent.classList.add('active');
             }
         });
@@ -180,9 +72,7 @@ function initTabs() {
 // ===== ACCORDION =====
 function initAccordions() {
     document.querySelectorAll('.dimension-header').forEach(header => {
-        header.addEventListener('click', (e) => {
-            // Avoid toggling accordion if user clicked details/status element directly
-            if (e.target.classList.contains('dimension-status')) return;
+        header.addEventListener('click', () => {
             const dim = header.closest('.dimension');
             dim.classList.toggle('expanded');
         });
@@ -207,24 +97,12 @@ function initBiasPopover() {
     });
 }
 
-// ===== CHECKS EXPANSIBLE =====
-function initChecksExpanded() {
-    const btnExpand = document.getElementById('btn-expand-checks');
-    const detail = document.getElementById('checks-detail');
-    if (!btnExpand || !detail) return;
-
-    btnExpand.addEventListener('click', () => {
-        detail.classList.toggle('expanded');
-        btnExpand.textContent = detail.classList.contains('expanded') ? 'Collapse' : 'Details';
-    });
-}
-
 // ===== ACTION BUTTONS =====
 function initActions() {
     els.btnBlock.addEventListener('click', handleBlock);
     els.btnReword.addEventListener('click', handleReword);
     els.btnEscalate.addEventListener('click', () => {
-        // Disabled — handled by CSS and disabled attribute
+        // Disabled — show tooltip only
     });
 }
 
@@ -291,11 +169,9 @@ function renderEvaluation(data) {
     state.blockedSegments.clear();
     state.rewordedSegments.clear();
 
-    // Reset button states and enable them
+    // Reset button states
     els.btnBlock.classList.remove('active-action');
     els.btnReword.classList.remove('active-action');
-    els.btnBlock.disabled = false;
-    els.btnReword.disabled = false;
 
     // Confidence
     updateConfidence(data.overall_confidence + '%', 'normal');
@@ -305,133 +181,25 @@ function renderEvaluation(data) {
 
     // Dimensions
     renderDimensions(data.dimensions || {});
-
-    // Checks (Dynamic Rendering)
-    renderChecks(data);
 }
 
 function updateConfidence(display, mode) {
     const el = els.confidenceValue;
-    const statusEl = els.confidenceStatus;
-
-    if (!el || !statusEl) return;
+    const sub = els.confidenceSublabel;
 
     el.classList.remove('blocked');
-    statusEl.className = 'confidence-status';
-
-    const scoreNum = parseInt(display) || 0;
-    const ringProgress = document.querySelector('.confidence-ring .ring-progress');
-    if (ringProgress) {
-        const circumference = 2 * Math.PI * 15.5; // r=15.5
-        const dashArray = (scoreNum / 100) * circumference;
-        ringProgress.style.strokeDasharray = `${dashArray} ${circumference}`;
-        
-        // Dynamic colors for progress ring based on score
-        if (mode === 'blocked') {
-            ringProgress.style.stroke = 'var(--cp-danger)';
-        } else {
-            ringProgress.style.stroke = getScoreColor(scoreNum);
-        }
-    }
+    sub.classList.remove('blocked');
 
     if (mode === 'blocked') {
-        el.textContent = 'Block';
+        el.textContent = display;
         el.classList.add('blocked');
-        statusEl.textContent = 'Policy Blocked';
-        statusEl.classList.add('status-poor');
+        sub.textContent = 'Blocked';
+        sub.classList.add('blocked');
     } else {
         el.textContent = display;
-        if (scoreNum >= 80) {
-            statusEl.textContent = 'High Confidence';
-            statusEl.classList.add('status-good');
-        } else if (scoreNum >= 60) {
-            statusEl.textContent = 'Medium Confidence';
-            statusEl.classList.add('status-moderate');
-        } else {
-            statusEl.textContent = 'Low Confidence';
-            statusEl.classList.add('status-poor');
-        }
-    }
-}
-
-// ===== DYNAMIC CHECKS RENDER =====
-function renderChecks(data) {
-    const list = document.querySelector('.checks-detail-list');
-    const statusEl = els.checksStatus;
-    if (!list || !statusEl) return;
-
-    list.innerHTML = '';
-
-    const perfScore = data.dimensions?.performance?.score || 0;
-    const costScore = data.dimensions?.cost?.score || 0;
-    const respScore = data.dimensions?.responsibility?.score || 0;
-
-    const checks = [
-        {
-            name: 'Reliability',
-            passed: perfScore >= 60,
-            warning: perfScore >= 40 && perfScore < 60,
-            successText: 'Reliability validation passed',
-            failText: 'Low reliability risk detected',
-            warningText: 'Moderate reliability risk warning'
-        },
-        {
-            name: 'Cost Efficiency',
-            passed: costScore >= 60,
-            warning: costScore >= 40 && costScore < 60,
-            successText: 'Cost efficiency threshold met',
-            failText: 'High token/cost waste warning',
-            warningText: 'Moderate cost overhead warning'
-        },
-        {
-            name: 'Safety & Ethics',
-            passed: respScore >= 60,
-            warning: respScore >= 40 && respScore < 60,
-            successText: 'Safety & ethics compliance verified',
-            failText: 'Safety/ethical risks detected',
-            warningText: 'Potential safety compliance warnings'
-        }
-    ];
-
-    let allPassed = true;
-    let anyFail = false;
-
-    checks.forEach(c => {
-        const li = document.createElement('li');
-        let icon = '';
-        let text = '';
-        let colorClass = '';
-
-        if (c.passed) {
-            icon = '✓';
-            text = c.successText;
-            colorClass = 'color-green';
-        } else if (c.warning) {
-            icon = '⚠';
-            text = c.warningText;
-            colorClass = 'color-yellow';
-            allPassed = false;
-        } else {
-            icon = '✕';
-            text = c.failText;
-            colorClass = 'color-red';
-            allPassed = false;
-            anyFail = true;
-        }
-
-        li.innerHTML = `<span class="check-icon ${colorClass}">${icon}</span> ${text}`;
-        list.appendChild(li);
-    });
-
-    if (allPassed) {
-        statusEl.textContent = '✓ All checks passed';
-        statusEl.className = 'checks-status color-green';
-    } else if (anyFail) {
-        statusEl.textContent = '✕ Safety/Reliability warnings';
-        statusEl.className = 'checks-status color-red';
-    } else {
-        statusEl.textContent = '⚠ Review warnings';
-        statusEl.className = 'checks-status color-yellow';
+        el.style.color = '#4CAF50';
+        sub.textContent = mode === 'reworded' ? 'Confidence' : 'Overall';
+        sub.classList.remove('blocked');
     }
 }
 
@@ -441,6 +209,7 @@ function renderHistogram(distribution) {
     container.innerHTML = '';
 
     if (!distribution || distribution.length === 0) {
+        // Generate default distribution
         distribution = generateDefaultDistribution(72);
     }
 
@@ -515,31 +284,14 @@ function renderDimension(name, data) {
     // Update score text
     const scoreEl = dim.querySelector('.dimension-score');
     scoreEl.textContent = score + '%';
-
-    // Update score status text badge
-    const statusEl = dim.querySelector(`#status-${name}`);
-    if (statusEl) {
-        statusEl.className = 'dimension-status';
-        if (score >= 80) {
-            statusEl.textContent = 'Good';
-            statusEl.classList.add('status-good');
-        } else if (score >= 60) {
-            statusEl.textContent = 'Moderate';
-            statusEl.classList.add('status-moderate');
-        } else {
-            statusEl.textContent = 'Poor';
-            statusEl.classList.add('status-poor');
-        }
-    }
+    scoreEl.style.color = getScoreColor(score);
 
     // Update ring indicator
     const ring = dim.querySelector('.ring-fill');
-    if (ring) {
-        const circumference = 2 * Math.PI * 15.5; // r=15.5
-        const dashArray = (score / 100) * circumference;
-        ring.style.strokeDasharray = `${dashArray} ${circumference}`;
-        ring.style.stroke = getScoreColor(score);
-    }
+    const circumference = 2 * Math.PI * 15.5; // r=15.5
+    const dashArray = (score / 100) * circumference;
+    ring.style.strokeDasharray = `${dashArray} ${circumference}`;
+    ring.style.stroke = getScoreColor(score);
 
     // Update sub-metrics
     const subMetrics = dim.querySelectorAll('.sub-metric');
@@ -598,12 +350,11 @@ function getSubMetricValues(name, data) {
     return [];
 }
 
-// Get CSS variable equivalents for JS scores to support proper theming
 function getScoreColor(score) {
-    if (score >= 80) return 'var(--cp-success)';
-    if (score >= 60) return 'var(--cp-warning)';
-    if (score >= 40) return 'var(--cp-warning)';
-    return 'var(--cp-danger)';
+    if (score >= 80) return '#4CAF50';
+    if (score >= 60) return '#FFD700';
+    if (score >= 40) return '#FF9800';
+    return '#D32F2F';
 }
 
 // ===== CHROME MESSAGE LISTENERS =====
@@ -621,15 +372,6 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
                 updateConfidence(newConf + '%', 'reworded');
                 // Re-render histogram for new score
                 renderHistogram(generateDefaultDistribution(newConf));
-                // Update checks to dynamic new state
-                if (state.evaluation) {
-                    state.evaluation.overall_confidence = newConf;
-                    // If performance was low, simulate fix
-                    if (state.evaluation.dimensions?.performance) {
-                        state.evaluation.dimensions.performance.score = Math.max(88, state.evaluation.dimensions.performance.score);
-                    }
-                    renderChecks(state.evaluation);
-                }
                 break;
 
             case 'blockComplete':
@@ -639,4 +381,84 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
                 break;
         }
     });
+}
+
+// ===== DEMO DATA (default when no backend) =====
+function getDemoData() {
+    return {
+        evaluation_id: 'demo-001',
+        overall_confidence: 72,
+        risk_level: 'medium',
+        recommended_action: 'flag',
+        dimensions: {
+            performance: {
+                score: 60,
+                label: 'Reliability',
+                sub_metrics: {
+                    accuracy: 33,
+                    hallucination_risks: 45,
+                    hallucination_risk_level: 'medium',
+                    fabrication_signals: [],
+                    hedging_ratio: 0.15,
+                    prompt_alignment: 0.72,
+                },
+            },
+            cost: {
+                score: 45,
+                label: 'Efficiency',
+                sub_metrics: {
+                    token_consumption: 245,
+                    hallucination_rework_cost: 30,
+                    loop_detected: false,
+                    cost_rating: 'moderate',
+                    estimated_cost_usd: 0.004,
+                },
+            },
+            responsibility: {
+                score: 72,
+                label: 'Safety & Ethics',
+                sub_metrics: {
+                    hate_speech: 66,
+                    pii_leaks: 40,
+                    bias_detection: 59,
+                    pii_count: 0,
+                    tone_compliance: 86,
+                    toxicity_detected: false,
+                    injection_detected: false,
+                    content_safe: true,
+                },
+            },
+        },
+        segments: [
+            {
+                text: 'The adoption of AI in supply chain management is driven by several key factors.',
+                classification: 'verified',
+                confidence: 91,
+                badge: 'High Confidence',
+                reasons: [],
+            },
+            {
+                text: 'Second, It helps optimize inventory levels and reduce operational costs across the supply chain.',
+                classification: 'ambiguous',
+                confidence: 58,
+                badge: 'High Cost / Rework?',
+                reasons: ['Medium hallucination risk', 'Contains hedging patterns'],
+            },
+            {
+                text: 'Additionally, some experimental AI models are being developed to perfectly synchronize global logistics.',
+                classification: 'hallucination',
+                confidence: 22,
+                badge: 'Hallucination Detected',
+                reasons: ['High hallucination risk', 'Fabricated claims'],
+            },
+            {
+                text: 'Finally, AI improves supplier collaboration and enhances decision-making speed.',
+                classification: 'verified',
+                confidence: 88,
+                badge: 'High Confidence',
+                reasons: [],
+            },
+        ],
+        confidence_distribution: [5, 8, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 72, 68, 55, 40, 30],
+    };
 }

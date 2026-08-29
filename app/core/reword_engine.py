@@ -138,10 +138,13 @@ def _soften_speculative_claims(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 def reword_text(original_text: str, prompt: str, reasons: List[str]) -> RewordResult:
-    """Rewords flagged text to improve confidence.
+    """Applies heuristic corrections to flagged text.
 
-    Primary: Uses Gemini to intelligently rephrase the text.
-    Fallback: Heuristic regex corrections if Gemini is unavailable.
+    Steps:
+      1. Strip hedging phrases
+      2. Remove fabricated citations/URLs
+      3. Soften absolute speculative claims
+      4. Re-evaluate confidence
     """
     if not original_text or not original_text.strip():
         return RewordResult(
@@ -151,116 +154,6 @@ def reword_text(original_text: str, prompt: str, reasons: List[str]) -> RewordRe
             new_badge="High Confidence",
         )
 
-    # Try Gemini-powered reword first
-    gemini_result = _gemini_reword(original_text, prompt, reasons)
-    if gemini_result is not None:
-        return gemini_result
-
-    # Fallback to heuristic reword
-    return _heuristic_reword(original_text, prompt, reasons)
-
-
-# ---------------------------------------------------------------------------
-# Gemini-powered reword
-# ---------------------------------------------------------------------------
-
-REWORD_SYSTEM_PROMPT = """You are ControlPlane.ai's text correction engine.
-
-Your job: Given a paragraph from an AI response that was flagged as low-confidence
-(hallucinated or ambiguous), rewrite it to be factually grounded and reliable.
-
-RULES:
-1. Keep the same topic and intent as the original text.
-2. Remove any fabricated facts, fake URLs, invented statistics, or false citations.
-3. Replace speculative claims stated as certainties with properly hedged language.
-4. Keep the rewrite concise — similar length to the original.
-5. Do NOT add new information that wasn't in the original.
-6. Do NOT add disclaimers like "Note:" or "It's important to note that".
-7. Write in the same tone and style as the original.
-8. The rewritten text should be something a careful, accurate AI would produce.
-
-Respond with ONLY valid JSON matching the required schema. No markdown, no commentary."""
-
-
-def _gemini_reword(original_text: str, prompt: str, reasons: List[str]):
-    """Uses Gemini to intelligently rephrase flagged text. Returns None on failure."""
-    from app.core.gemini_judge import _get_client
-    import os
-    import json
-    import logging
-
-    logger = logging.getLogger("controlplane.reword")
-
-    client = _get_client()
-    if client is None:
-        return None
-
-    model_name = os.getenv("GEMINI_MODEL", "gemini-3.6-flash").strip()
-
-    reasons_str = ", ".join(reasons) if reasons else "low confidence"
-
-    user_message = f"""Rewrite the following flagged paragraph to improve its factual accuracy and confidence.
-
---- ORIGINAL USER PROMPT ---
-{prompt}
-
---- FLAGGED PARAGRAPH ---
-{original_text}
-
---- WHY IT WAS FLAGGED ---
-{reasons_str}
-
---- END ---
-
-Rewrite this paragraph to be factually accurate and well-grounded. Return JSON with:
-- "corrected_text": the rewritten paragraph (string)
-- "confidence": your confidence in the corrected text (integer 0-100)"""
-
-    try:
-        from google.genai import types
-        from pydantic import BaseModel as PydanticBaseModel
-
-        class RewordSchema(PydanticBaseModel):
-            corrected_text: str
-            confidence: int
-
-        response = client.models.generate_content(
-            model=model_name,
-            contents=user_message,
-            config=types.GenerateContentConfig(
-                system_instruction=REWORD_SYSTEM_PROMPT,
-                temperature=0.3,
-                response_mime_type="application/json",
-                response_schema=RewordSchema,
-            ),
-        )
-
-        raw = response.text.strip()
-        parsed = json.loads(raw)
-
-        corrected = parsed.get("corrected_text", original_text)
-        confidence = min(98, max(70, parsed.get("confidence", 92)))
-
-        logger.info(f"Gemini reword success: confidence={confidence}")
-
-        return RewordResult(
-            corrected_text=corrected,
-            new_confidence=confidence,
-            new_classification="verified",
-            new_badge="High Confidence",
-        )
-
-    except Exception as e:
-        logger.error(f"Gemini reword failed: {e}")
-        return None
-
-
-# ---------------------------------------------------------------------------
-# Heuristic fallback reword
-# ---------------------------------------------------------------------------
-
-def _heuristic_reword(original_text: str, prompt: str, reasons: List[str]) -> RewordResult:
-    """Applies regex-based corrections as fallback when Gemini is unavailable."""
     corrected = original_text
 
     # Apply corrections based on detected reasons
@@ -294,7 +187,7 @@ def _heuristic_reword(original_text: str, prompt: str, reasons: List[str]) -> Re
 
     # Boost confidence since we actively corrected the text
     boosted_confidence = max(new_analysis.confidence, 88)
-    # Cap at 96 for heuristic rewording
+    # Cap at 96 for heuristic rewording (real LLM reword would score higher)
     boosted_confidence = min(boosted_confidence, 96)
 
     return RewordResult(
@@ -303,4 +196,3 @@ def _heuristic_reword(original_text: str, prompt: str, reasons: List[str]) -> Re
         new_classification="verified" if boosted_confidence >= 70 else new_analysis.classification,
         new_badge="High Confidence" if boosted_confidence >= 70 else new_analysis.badge,
     )
-
