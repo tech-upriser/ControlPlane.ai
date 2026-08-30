@@ -79,6 +79,6 @@ This project requires the following:
 
 ## Maintainers
 
-- [tech-upriser](https://github.com/tech-upriser) (Member C - UI & Core Extension)
-- [PARTHKATARIA22](https://github.com/PARTHKATARIA22) (Member A - Backend & Evaluate Routes)
+- [tech-upriser](https://github.com/tech-upriser)
+- [PARTHKATARIA22](https://github.com/PARTHKATARIA22)
 - [Aaryaa-pusp](https://github.com/Aaryaa-pusp)
